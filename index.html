@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <link rel="icon" href="https://developer.apple.com/wwdc25/images/p1/wwdc25-sf-motion-still-first-large-p1_2x.jpg" type="image/png">
+
+  <!-- OGP (Open Graph Protocol) 設定 -->
+  <meta property="og:title" content="iPreview">
+  <meta property="og:description" content="進化した表示">
+  <meta property="og:image" content="https://developer.apple.com/wwdc25/images/p1/wwdc25-sf-motion-still-first-large-p1_2x.jpg">
+  <meta property="og:type" content="website">
+
+  <!-- Twitterカード設定 -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="iPreview">
+  <meta name="twitter:description" content="進化した表示">
+  <meta name="twitter:image" content="https://developer.apple.com/wwdc25/images/p1/wwdc25-sf-motion-still-first-large-p1_2x.jpg">
+
+  <meta charset="UTF-8">
+  <title>画像表示 - 保護モード</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      height: 100%;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+
+    #container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      -webkit-user-drag: none;
+      pointer-events: none;
+      touch-action: none;
+    }
+
+    #overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      display: none;
+      z-index: 10;
+    }
+
+    #trap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      background-color: rgba(0,0,0,0); /* 完全透明 */
+    }
+  </style>
+</head>
+<body>
+
+  <div id="container">
+    <img src="ex1.png" id="image" alt="保護画像" />
+    <div id="trap"></div>
+    <div id="overlay"></div>
+  </div>
+
+  <script>
+    const audio = new Audio('mac.wav');
+    audio.loop = true;
+
+    function activateProtection() {
+      document.getElementById('overlay').style.display = 'block';
+      audio.play();
+    }
+
+    // タッチ、クリック、長押し、キーボード
+    const trap = document.getElementById('trap');
+    trap.addEventListener('click', activateProtection);
+    trap.addEventListener('touchstart', activateProtection);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 's' || e.key === 'S' || e.key === 'PrintScreen') {
+        activateProtection();
+      }
+      if (e.metaKey || e.ctrlKey || e.key.includes('Volume')) {
+        activateProtection();
+      }
+    });
+
+    // スクショ検知の代替（debugger反応）
+    setInterval(() => {
+      const t1 = performance.now();
+      debugger;
+      const t2 = performance.now();
+      if (t2 - t1 > 100) activateProtection();
+    }, 1000);
+
+    // コンテキストメニュー・選択・ドラッグ等無効化
+    ['contextmenu', 'dragstart', 'selectstart', 'mousedown', 'touchstart', 'touchend'].forEach(event => {
+      document.addEventListener(event, e => e.preventDefault(), { passive: false });
+    });
+
+    // iOS長押しメニュー防止（画像にもtouch-action:noneを指定済み）
+    document.body.addEventListener('gesturestart', e => e.preventDefault());
+
+  </script>
+</body>
+</html>
