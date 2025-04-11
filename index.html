@@ -42,6 +42,19 @@
       -webkit-user-drag: none;
       pointer-events: none;
       touch-action: none;
+      z-index: 1;
+    }
+
+    #ex2-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+      pointer-events: none; /* 画像に対する操作を無効化 */
+      z-index: 9999; /* 最前面に配置 */
     }
 
     #overlay {
@@ -63,12 +76,14 @@
       z-index: 5;
       background-color: rgba(0,0,0,0); /* 完全透明 */
     }
+
   </style>
 </head>
 <body>
 
   <div id="container">
     <img src="ex1.png" id="image" alt="保護画像" />
+    <img src="ex2.png" id="ex2-image" alt="保護画像2" />
     <div id="trap"></div>
     <div id="overlay"></div>
   </div>
@@ -79,6 +94,7 @@
 
     function activateProtection() {
       document.getElementById('overlay').style.display = 'block';
+      document.getElementById('ex2-image').style.display = 'block'; // ex2画像を表示
       audio.play();
     }
 
